@@ -296,7 +296,7 @@ def merge_linked_cliques_2(G, G_un, read_node_map, read_db, clique_cutoff):
                     overlap = G[n1][n2][0]['label']
                     G_all_clique.add_edge(n1, n2, label=overlap)
         print "Transitive reduction of all cliques finished!", len(G_all_clique), len(G_all_clique.edges())
-        pdb.set_trace()
+        #pdb.set_trace()
         #DFS_collapse_graph(G_all_clique, read_node_map, read_db);
 
         subgraphs = nx.weakly_connected_components(G_all_clique)
@@ -521,6 +521,13 @@ fa_file=sys.argv[1]
 pair_file=sys.argv[2]
 overlap = sys.argv[3]
 
+# parameters
+read_len = int(sys.argv[4])
+Fragment_len = int(sys.argv[5])
+overlap_cutoff = int(0.9*read_len)
+binning_overlap_cutoff = overlap_cutoff+10
+tip_len_cutoff = 400
+
 des_list, read_map, read_db = generate_sequence_file(fa_file, 'sequences.txt')
 subprocess.call("Apsp sequences.txt -p 4 -m %s -o 2 >overlap_whole.txt" % overlap, shell=True)
 overlap_file='overlap_whole.txt'
@@ -531,11 +538,11 @@ pair_dict = read_pair_file(pair_file, read_map)
 #pdb.set_trace()
 
 # parameters
-read_len = 250
-Fragment_len = 450
-overlap_cutoff = 220
-binning_overlap_cutoff = 230
-tip_len_cutoff = 500
+#read_len = 200
+#Fragment_len = 450
+#overlap_cutoff = 180
+#binning_overlap_cutoff = 190
+#tip_len_cutoff = 400
 
 idx=0
 subgraphs=nx.weakly_connected_components(G)
