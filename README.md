@@ -20,7 +20,7 @@ For contigs correction based on alignment:
 
 # Usage
 ```python 
-python preprocess.py [-h] -f1 INPUT_F1 -f2 INPUT_F2 -l OVERLAP_LEN -r READ_LEN [-F FRAGMENT_LEN] [-std FRAGMENT_STD] [-n DUP_N] [-correct CONTIG_CORRECT] [-t THREADS]
+python pehaplo.py [-h] -f1 INPUT_F1 -f2 INPUT_F2 -l OVERLAP_LEN -r READ_LEN [-F FRAGMENT_LEN] [-std FRAGMENT_STD] [-n DUP_N] [-correct CONTIG_CORRECT] [-t THREADS]
 ```
 
 Arguments:

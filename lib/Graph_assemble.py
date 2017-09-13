@@ -286,7 +286,8 @@ def bifurcation_classifier(N,G,PE_G,path,SISO,read_db,fragment_len):
         con_PE_num=0
         con_num=0
         min_diff_con_node=0
-        for pre in PE_G.predecessors(N):
+        #for pre in PE_G.predecessors(N):
+        for pre in PE_G[N]:
             if pre in SISO:
                 con_PE_num+=int(PE_G[pre][N]['label'])
                 con_num+=1
@@ -854,8 +855,8 @@ def DFS_paths_single_pair_end(G, start_node, PE_G, read_db, fragment_len=300):
             plan_nodes=list(set(plan_nodes)-set(path))
             SISO_score=get_paired_score_2(SISO,succ_node,PE_G)
             SISO_plan_score=get_paired_score_plan(SISO,plan_nodes,PE_G)
-            PE_plan_nodes=list(set(PE_G.successors(succ_node))-set(path))
-            #PE_plan_nodes=list(set(PE_G[succ_node].keys())-set(path))
+            #PE_plan_nodes=list(set(PE_G.successors(succ_node))-set(path))
+            PE_plan_nodes=list(set(PE_G[succ_node].keys())-set(path))
             PE_plan_score=get_paired_score_plan(SISO,PE_plan_nodes,PE_G)
             path_score=get_paired_score_2(path[:-1],succ_node,PE_G)
             path_plan_score=get_paired_score_plan(path[:-1],plan_nodes,PE_G)
@@ -1044,7 +1045,8 @@ def DFS_paths_single_pair_end_unassembled(G, start_node, PE_G, read_db, fragment
             plan_nodes=list(set(plan_nodes)-set(path))
             SISO_score=get_paired_score_2(SISO,succ_node,PE_G)
             SISO_plan_score=get_paired_score_plan(SISO,plan_nodes,PE_G)
-            PE_plan_nodes=list(set(PE_G.successors(succ_node))-set(path))
+            #PE_plan_nodes=list(set(PE_G.successors(succ_node))-set(path))
+            PE_plan_nodes=list(set(PE_G[succ_node].keys())-set(path))
             PE_plan_score=get_paired_score_plan(SISO,PE_plan_nodes,PE_G)
             path_score=get_paired_score_2(path[:-1],succ_node,PE_G)
             path_plan_score=get_paired_score_plan(path[:-1],plan_nodes,PE_G)

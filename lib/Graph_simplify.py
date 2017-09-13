@@ -348,9 +348,17 @@ def create_paired_end_graph_with_pairs(read_node_dict, pairs_dict):
         else:
             paired_end_edges[(pair_n1, pair_n2)]+=1
     
-    PE_G=nx.DiGraph()
+    #PE_G=nx.DiGraph()
+    #for pair in paired_end_edges:
+    #    PE_G.add_edge(pair[0], pair[1], color='red', label=str(paired_end_edges[pair]))
+    
+    PE_G=nx.Graph()
     for pair in paired_end_edges:
-        PE_G.add_edge(pair[0], pair[1], color='red', label=str(paired_end_edges[pair]))
+        if PE_G.has_edge(pair[0], pair[1]):
+            new_label = str(paired_end_edges[pair]+int(PE_G[pair[0]][pair[1]]['label']))
+            PE_G.add_edge(pair[0], pair[1], color='red', label = new_label)
+        else:
+            PE_G.add_edge(pair[0], pair[1], color='red', label = str(paired_end_edges[pair]))
 
     return paired_end_edges, PE_G
 
