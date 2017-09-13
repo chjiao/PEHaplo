@@ -490,6 +490,9 @@ idx=0
 while(len(G)>0):
     idx+=1
     starting_nodes=[n for n in G.nodes() if G.in_degree(n)==0]
+    if len(starting_nodes)==0:
+        break
+        #pdb.set_trace()
     plus_reads_dict,minus_reads_dict=BFS_tranverse_graph_pair(G,read_db,des_list,starting_nodes[0], pair1_dict, pair2_dict)
     if len(plus_reads_dict)>4:
         output_reads(plus_reads_dict, minus_reads_dict, des_list, f1, f2)

@@ -85,8 +85,8 @@ def create_graph_apsp_undirected(overlap_file):
                 G.add_edge(read_1,read_2,label=overlap_len)
             elif read_2 in G[read_1]:
                 print "Duplicate edge found!",line.strip()
-                if int(overlap_len)>int(G[read_1][read_2][0]['label']):
-                    G[read_1][read_2][0]['label']=overlap_len
+                if int(overlap_len)>int(G[read_1][read_2]['label']):
+                    G[read_1][read_2]['label']=overlap_len
     return G
 
 def read_pair_file(pair_file, read_map):
@@ -278,7 +278,7 @@ def merge_linked_cliques(G, G_un, read_node_map, read_db, clique_cutoff):
 
 def merge_linked_cliques_2(G, G_un, read_node_map, read_db, clique_cutoff):
     max_cliques = list(nx.find_cliques(G_un))
-    max_cliques = [clique for clique in max_cliques if len(clique)>3]
+    max_cliques = [clique for clique in max_cliques if len(clique)>clique_cutoff]
     
     while max_cliques:
         G_all_clique = nx.MultiDiGraph()
@@ -295,9 +295,8 @@ def merge_linked_cliques_2(G, G_un, read_node_map, read_db, clique_cutoff):
                 if not G_all_clique.has_edge(n1, n2):
                     overlap = G[n1][n2][0]['label']
                     G_all_clique.add_edge(n1, n2, label=overlap)
+        #DFS_transitive_reduction(G_all_clique)
         print "Transitive reduction of all cliques finished!", len(G_all_clique), len(G_all_clique.edges())
-        #pdb.set_trace()
-        #DFS_collapse_graph(G_all_clique, read_node_map, read_db);
 
         subgraphs = nx.weakly_connected_components(G_all_clique)
         for subgraph in subgraphs:
@@ -357,6 +356,136 @@ def merge_linked_cliques_2(G, G_un, read_node_map, read_db, clique_cutoff):
                     G.remove_node(clique_node)
                     G_un.remove_node(clique_node)
 
+        max_cliques = list(nx.find_cliques(G_un))
+        max_cliques = [clique for clique in max_cliques if len(clique)>clique_cutoff]
+
+def transitive_reduction(G):
+    TR = nx.MultiDiGraph()
+    TR.add_nodes_from(G.nodes())
+    for u in G:
+        u_edges = set(G[u])
+        for v in G[u]:
+            u_edges -= {y for x, y in nx.dfs_edges(G, v)}
+        TR.add_edges_from((u,v) for v in u_edges)
+    return TR
+
+def merge_linked_cliques_3(G, G_un, read_node_map, read_db, clique_cutoff):
+    max_cliques = list(nx.find_cliques(G_un))
+    max_cliques = [clique for clique in max_cliques if len(clique)>clique_cutoff]
+    
+    while max_cliques:
+        #pdb.set_trace()
+        G_all_clique = nx.MultiDiGraph()
+        idx = 0
+        for clique in max_cliques:
+            idx+=1
+            print idx, len(clique)
+            GC_single = G.subgraph(clique)
+            #DFS_transitive_reduction(GC_single)
+            GC_single = transitive_reduction(GC_single)
+            for this_edge in GC_single.edges():
+                n1, n2 = this_edge[0], this_edge[1]
+                if not n1 in G_all_clique:
+                    G_all_clique.add_node(n1, read_ids = G.node[n1]['read_ids'])
+                if not n2 in G_all_clique:
+                    G_all_clique.add_node(n2, read_ids = G.node[n2]['read_ids'])
+                if not G_all_clique.has_edge(n1, n2):
+                    overlap = G[n1][n2][0]['label']
+                    G_all_clique.add_edge(n1, n2, label=overlap)
+            for N in GC_single.nodes():
+                if not N in G_all_clique:
+                    G_all_clique.add_node(N, read_ids = G.node[N]['read_ids'])
+
+        #DFS_transitive_reduction(G_all_clique)
+        print "Transitive reduction of all cliques finished!", len(G_all_clique.nodes()), len(G_all_clique.edges())
+        #pdb.set_trace()
+
+        subgraphs = nx.weakly_connected_components(G_all_clique)
+        idx = 0
+        for subgraph in subgraphs:
+            idx +=1
+            print idx,len(subgraph)
+            G_clique = G_all_clique.subgraph(subgraph)
+
+            start_nodes = [x for x in G_clique if G_clique.in_degree(x)==0]
+            end_nodes = [n for n in G_clique if G_clique.out_degree(n)==0]
+
+            start_pred_nodes = {}
+            start_overlaps = {}
+            for start_node in start_nodes:
+                start_pred_nodes[start_node] = G.predecessors(start_node)
+                for pred_node in start_pred_nodes[start_node]:
+                    if not pred_node in G or not start_node in G[pred_node]:
+                        pdb.set_trace()
+                    o = G[pred_node][start_node][0]['label']
+                    start_overlaps[(pred_node, start_node)] = o
+            #start_pred_nodes = list(set(start_pred_nodes))
+            
+            end_succ_nodes = {}
+            end_overlaps = {}
+            for end_node in end_nodes:
+                end_succ_nodes[end_node] = G.successors(end_node)
+                for succ_node in end_succ_nodes[end_node]:
+                    o = G[end_node][succ_node][0]['label']
+                    end_overlaps[(end_node, succ_node)] = o
+            #end_succ_nodes = list(set(end_succ_nodes))
+
+            # remove the original nodes in graph
+            for N in G_clique:
+                if N in G:
+                    G.remove_node(N)
+                    G_un.remove_node(N)
+            
+            # simplify the linked cliques graph
+            DFS_collapse_graph(G_clique, read_node_map, read_db)
+            DFS_transitive_reduction(G_clique)
+            DFS_collapse_graph(G_clique, read_node_map, read_db)
+
+            # add the clique graph to the original graph
+            for this_edge in G_clique.edges():
+                n1, n2= this_edge[0], this_edge[1]
+                if not G.has_edge(this_edge[0], this_edge[1]):
+                    if not n1 in G:
+                        N_read_ids = G_clique.node[n1]['read_ids']
+                        G.add_node(n1, read_ids = N_read_ids)
+                    if not n2 in G:
+                        N_read_ids = G_clique.node[n2]['read_ids']
+                        G.add_node(n2, read_ids = N_read_ids)
+                    o = G_clique[this_edge[0]][this_edge[1]][0]['label']
+                    G.add_edge(this_edge[0], this_edge[1], label = o)
+                    G_un.add_edge(this_edge[0], this_edge[1], label = o)
+
+            for N in G_clique.nodes():
+                if not N in G:
+                    N_read_ids = G_clique.node[N]['read_ids']
+                    G.add_node(N, read_ids = N_read_ids)
+                    G_un.add_node(N)
+
+            
+            for start_node in start_nodes:
+                start_read_id = start_node.split('|')[0]
+                new_start_node = read_node_map[start_read_id] # collapsed node
+                pred_nodes = start_pred_nodes[start_node]
+                for pred_node in pred_nodes:
+                    if pred_node in G:
+                        if not G.has_edge(pred_node, start_node):
+                            o = start_overlaps[(pred_node, start_node)]
+                            G.add_edge(pred_node, new_start_node, label = o)
+                            G_un.add_edge(pred_node, new_start_node, label = o)
+            
+            for end_node in end_nodes:
+                end_read_id = end_node.split('|')[0]
+                new_end_node = read_node_map[end_read_id] # collapsed node
+                succ_nodes = end_succ_nodes[end_node]
+                for succ_node in succ_nodes:
+                    if succ_node in G:
+                        if not G.has_edge(end_node, succ_node):
+                            o = end_overlaps[(end_node, succ_node)]
+                            G.add_edge(new_end_node, succ_node, label = o)
+                            G_un.add_edge(new_end_node, succ_node, lable = o)
+            
+        print len(G_un.nodes()),len(G_un.edges())
+    
         max_cliques = list(nx.find_cliques(G_un))
         max_cliques = [clique for clique in max_cliques if len(clique)>clique_cutoff]
 
@@ -524,7 +653,7 @@ overlap = sys.argv[3]
 # parameters
 read_len = int(sys.argv[4])
 Fragment_len = int(sys.argv[5])
-overlap_cutoff = int(0.9*read_len)
+overlap_cutoff = int(sys.argv[6])
 binning_overlap_cutoff = overlap_cutoff+10
 tip_len_cutoff = 400
 
@@ -550,6 +679,7 @@ subgraphs=nx.weakly_connected_components(G)
 # saved files
 f_path1=open('Paths.txt','w')
 f_contig1=open('Contigs.fa','w')
+f_node = open('PEG_nodes_sequences.fa','w')
 
 for subgraph in subgraphs:
     start_time=datetime.now()
@@ -559,7 +689,7 @@ for subgraph in subgraphs:
 
     ## merge the cliques
     #merge_isolated_cliques(G_subgraph, G_un_subgraph, read_node_map, read_db)
-    merge_linked_cliques_2(G_subgraph, G_un_subgraph, read_node_map, read_db, 3)
+    merge_linked_cliques_3(G_subgraph, G_un_subgraph, read_node_map, read_db, 4)
 
     #pdb.set_trace()
     DFS_collapse_graph(G_subgraph, read_node_map, read_db)
@@ -578,7 +708,9 @@ for subgraph in subgraphs:
     
     ## delete low overlap edges
     for this_edge in G_subgraph.edges():
-        if int(G_subgraph.edge[this_edge[0]][this_edge[1]][0]['label'])<overlap_cutoff:
+        if not 0 in G_subgraph[this_edge[0]][this_edge[1]]:
+            pdb.set_trace()
+        if int(G_subgraph[this_edge[0]][this_edge[1]][0]['label'])<overlap_cutoff:
             G_subgraph.remove_edge(this_edge[0], this_edge[1])
     DFS_collapse_graph(G_subgraph, read_node_map, read_db)
     print "Collapsed graph after deleting low overlap edges, nodes number: %d, edges number: %d." % (len(G_subgraph),len(G_subgraph.edges()))
@@ -628,6 +760,8 @@ for subgraph in subgraphs:
             PE_G.add_node(N)
     print "After removing tips and bubbles, nodes number: %d, number of edges: %d" % (len(G_subgraph), len(G_subgraph.edges()))
     #pdb.set_trace()
+    for N in G_subgraph.nodes():
+        f_node.write('>'+N+'\n'+read_db[N]+'\n')
 
     ## find path and assembly
     #pdb.set_trace()
@@ -697,4 +831,4 @@ for subgraph in subgraphs:
 
 f_path1.close()
 f_contig1.close()
-
+f_node.close()

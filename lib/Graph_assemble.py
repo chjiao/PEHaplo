@@ -1217,7 +1217,7 @@ def DFS_paths_single_pair_end_unassembled(G, start_node, PE_G, read_db, fragment
             else:
                 stack.append((succ_node,path+[succ_node],SISO))
         else: # isolated node
-            pdb.set_trace()
+            #pdb.set_trace()
             yield path
 
 def get_assemblie2(G,read_db):

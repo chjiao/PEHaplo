@@ -18,6 +18,7 @@ def main():
     basic = parser.add_argument('-f1', dest='input_f1', type=str, required=True, help='input .1 part of paired-end fastq or fasta file')
     basic = parser.add_argument('-f2', dest='input_f2', type=str, required=True, help='input .2 part of paired-end fastq or fasta file')
     basic = parser.add_argument('-l', '--overlap_len', dest='overlap_len', type=int, required=True, help='overlap threshold between reads for reads orientation adjustment')
+    basic = parser.add_argument('-l1', '--overlap_stage1', dest='overlap_len1', type=int, help='overlap cutoff to remove potentially wrong overlaps after merging linked cliques, default same as -l')
     basic = parser.add_argument('-r', '--read_len', dest='read_len', type=int, required=True, help='reads length')
     basic = parser.add_argument('-F', '--fragment_len', dest='fragment_len', type=int, help='paired-end reads insert size, default as 2.5*read_len')
     basic = parser.add_argument('-std', dest='fragment_std', type=int, help='standard deviation of paired-end reads insert size, default as 100') 
@@ -69,26 +70,33 @@ def main():
         ## readjoiner for overlap graph
         print "Reads orientation adjustment ------------------------------------------"
         subprocess.check_call("gt readjoiner prefilter -q -des -readset samp -db kept_num.fa", shell=True)
-        subprocess.check_call("gt readjoiner overlap -readset samp -l %s" % args.overlap_len, shell=True)
+        subprocess.check_call("gt readjoiner overlap -readset samp -memlimit 2GB -l %s" % args.overlap_len, shell=True)
         subprocess.check_call("gt readjoiner spmtest -readset samp.0 -test showlist >samp_edges.txt", shell=True)
-        subprocess.check_call("rm samp.0.spm samp.rlt samp.ssp samp.0.cnt samp.esq samp.sds", shell=True)
+        #subprocess.check_call("rm samp.0.spm samp.rlt samp.ssp samp.0.cnt samp.esq samp.sds", shell=True)
 
         ## reads orientation adjustment
         subprocess.check_call('python "%s"/tools/get_pairs_title_from_nondup.py kept_num.fa kept_pairs.txt' % base_path, shell=True)
         subprocess.check_call('python "%s"/tools/Seperate_strand_single_pair.py samp.des samp_edges.txt kept_num.fa kept_pairs.txt' % base_path, shell=True)
 
-        """
 
         # ---------------- Assembly ------------------
         print "Begin assembly --------------------------------------------------------"
-        subprocess.check_call('python "%s"/tools/gen_dup_pair_file.py kept_num.fa karect_whole_preprocessed.rmdup.fa karect_%s karect_%s' %(base_path, args.input_f1, args.input_f2), shell=True)
+        #subprocess.check_call('python "%s"/tools/gen_dup_pair_file.py kept_num.fa karect_whole_preprocessed.rmdup.fa karect_%s karect_%s' %(base_path, args.input_f1, args.input_f2), shell=True)
+        subprocess.check_call('python "%s"/tools/gen_dup_pair_file.py kept_num.fa karect_whole_preprocessed.rmdup.fa %s %s' %(base_path, args.input_f1, args.input_f2), shell=True)
         
-        subprocess.check_call('python "%s"/apsp_overlap_clique_flu.py Plus_strand_reads.fa pair_end_connections.txt %s %s %s' % (base_path, args.overlap_len, args.read_len, args.fragment_len), shell=True)
-        #"""
+        if args.overlap_len1:
+            subprocess.check_call('python "%s"/apsp_overlap_clique_flu.py Plus_strand_reads.fa pair_end_connections.txt %s %s %s %s' % (base_path, args.overlap_len, args.read_len, args.fragment_len, args.overlap_len1), shell=True)
+        else:
+            subprocess.check_call('python "%s"/apsp_overlap_clique_flu.py Plus_strand_reads.fa pair_end_connections.txt %s %s %s %s' % (base_path, args.overlap_len, args.read_len, args.fragment_len, args.overlap_len), shell=True)
+        """
 
         # ---------------- remove duplicated contigs ------------------
-        subprocess.check_call('sga index Contigs.fa', shell=True)
-        subprocess.check_call('sga rmdup -e 0.005 Contigs.fa', shell=True)
+        if args.threads:
+            subprocess.check_call('sga index -t %s Contigs.fa' % args.threads, shell=True)
+            subprocess.check_call('sga rmdup -t %s -e 0.005 Contigs.fa' % args.threads, shell=True)
+        else:
+            subprocess.check_call('sga index Contigs.fa', shell=True)
+            subprocess.check_call('sga rmdup -e 0.005 Contigs.fa', shell=True)
         subprocess.check_call('mv Contigs.rmdup.fa Contigs.fa', shell=True)
 
         # ---------------- error correction -------------------------
@@ -103,9 +111,13 @@ def main():
             subprocess.check_call('samtools view -F 4 contigs_alignment.sam > contigs_mapped.sam', shell=True)
             
             subprocess.check_call('python "%s"/tools/identify_misjoin_contigs.py Contigs.fa contigs_mapped.sam %s %s %s' %(base_path, args.read_len, args.fragment_len, args.fragment_std), shell=True)
-
-            subprocess.check_call('sga index Contigs_clipped.fa', shell=True)
-            subprocess.check_call('sga rmdup -e 0.005 Contigs_clipped.fa', shell=True)
+            
+            if args.threads:
+                subprocess.check_call('sga index -t %s Contigs_clipped.fa' % args.threads, shell=True)
+                subprocess.check_call('sga rmdup -t %s -e 0.005 Contigs_clipped.fa' % args.threads, shell=True)
+            else:
+                subprocess.check_call('sga index Contigs_clipped.fa', shell=True)
+                subprocess.check_call('sga rmdup -e 0.005 Contigs_clipped.fa', shell=True)
             subprocess.check_call('mv Contigs_clipped.rmdup.fa Contigs_clipped.fa', shell=True)
 
          
