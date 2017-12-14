@@ -42,8 +42,8 @@ def main():
             args.fragment_std = 100
 
         ## error correction
-        print "Error correction begins -------------------------------------------------"
         #"""
+        print "Error correction begins -------------------------------------------------"
         if args.threads:
             subprocess.check_call("karect -correct -inputfile=%s -inputfile=%s -threads=%s -celltype=haploid -matchtype=hamming -aggressive=5.0 -numstages=2 -errorrate=0.25 -errorratesec=0.25" % (args.input_f1, args.input_f2, args.threads), shell=True)
         else:
@@ -76,6 +76,7 @@ def main():
         ## reads orientation adjustment
         subprocess.check_call('python "%s"/tools/get_pairs_title_from_nondup.py kept_num.fa kept_pairs.txt' % base_path, shell=True)
         subprocess.check_call('python "%s"/tools/Seperate_strand_single_pair.py samp.des samp_edges.txt kept_num.fa kept_pairs.txt' % base_path, shell=True)
+        #"""
 
 
         # ---------------- Assembly ------------------
