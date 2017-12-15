@@ -4,6 +4,7 @@ PEHaplo is a _de novo_ assembly tool for recovering virus haplotypes from virus 
 
 # Dependencies
 PEHaplo is developed based on Python 2.7
+
 Python module: [networkx](https://networkx.github.io)
 
 [Karect](https://github.com/aminallam/karect)
