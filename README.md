@@ -3,14 +3,14 @@
 PEHaplo is a _de novo_ assembly tool for recovering virus haplotypes from virus quasispecies sequencing data. It utilizes overlap graph and paired-end information to recover virus haplotypes.
 
 # Dependencies
-
-Python module: [networkx](https://networkx.github.io/documentation.html)
+PEHaplo is developed based on Python 2.7
+Python module: [networkx](https://networkx.github.io)
 
 [Karect](https://github.com/aminallam/karect)
 
 [Readjoiner](http://www.zbh.uni-hamburg.de/forschung/gi/software/readjoiner.html)
 
-[Apsp](http://confluence.qu.edu.qa/download/attachments/9240580/Prefix.tgz)
+[Apsp](https://github.com/chjiao/Apsp)
 
 [SGA](https://github.com/jts/sga)
 
