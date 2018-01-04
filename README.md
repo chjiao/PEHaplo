@@ -11,8 +11,7 @@ To quickly test the core assembly algorithm, we have prepared the procssed data 
 
 ## Required Dependencies
 1. Install Python 2.7.x
-2. Install Python module: [networkx](https://networkx.github.io)  
-pip install networkx  
+2. Install Python module: [networkx 1.11](https://github.com/networkx/networkx/releases/tag/networkx-1.11)  
 3. [Apsp](https://github.com/chjiao/Apsp)  
 cd Apsp/  
 make  
@@ -20,7 +19,7 @@ Copy the compiled binary file Apsp to your path
 
 ## Running Example
 cd PEHaplo  
-mkdir assembly
+mkdir assembly  
 cd assembly  
 python ../apsp_overlap_clique.py ../processed_test_data/Plus_strand_reads.fa ../processed_test_data/pair_end_connections.txt 180 250 600 210  
 
@@ -29,25 +28,21 @@ python ../apsp_overlap_clique.py ../processed_test_data/Plus_strand_reads.fa ../
 600: paired-end insert size  
 210: overlap threshold after merging cliques  
 
+
+
 # The whole pipeline
-# Dependencies
-PEHaplo is developed based on Python 2.7
+## Required Dependencies
+1. Install Python 2.7.x  
+2. Install Python module: [networkx 1.11](https://github.com/networkx/networkx/releases/tag/networkx-1.11)  
+3. Install [Karect](https://github.com/aminallam/karect), so that karect is in your path  
+4. Install [Readjoiner](http://www.zbh.uni-hamburg.de/forschung/gi/software/readjoiner.html), so that readjoiner is in your path
+5. Install [Apsp](https://github.com/chjiao/Apsp), so that Apsp is in your path  
+6. Install [SGA](https://github.com/jts/sga), so that sga is in your path  
 
-Python module: [networkx](https://networkx.github.io)
+For contigs correction based on alignment:  
+[Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) is required in your path
 
-[Karect](https://github.com/aminallam/karect)
-
-[Readjoiner](http://www.zbh.uni-hamburg.de/forschung/gi/software/readjoiner.html)
-
-[Apsp](https://github.com/chjiao/Apsp)
-
-[SGA](https://github.com/jts/sga)
-
-For contigs correction based on alignment:
-
-[Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
-
-# Usage
+## Usage
 ```python 
 python pehaplo.py [-h] -f1 INPUT_F1 -f2 INPUT_F2 -l OVERLAP_LEN -r READ_LEN [-l1 OVERLAP_LEN1] [-F FRAGMENT_LEN] [-std FRAGMENT_STD] [-n DUP_N] [-correct CONTIG_CORRECT] [-t THREADS]
 ```
@@ -86,3 +81,15 @@ Arguments:
                         
   -t THREADS, --threads THREADS
                         threads for karect, sga, bowtie2
+                        
+## Test data and Running Examples
+Use the test in folder raw_test_data/.  
+Example:
+cd PEHaplo  
+mkdir assembly  
+python pehaplo.py -f1 virus_1.fa -f2 virus_2.fa -l 180 -l1 210 -r 250 -F 600 -std 150 -n 3 -correct yes
+
+Output:  
+Contigs.fa: the raw output contigs  
+Contigs_clipped.fa:  the contigs after error correction
+PEG_nodes_sequences.fa: the nodes sequences in the graph
