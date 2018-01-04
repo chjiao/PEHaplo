@@ -28,6 +28,9 @@ python ../apsp_overlap_clique.py ../processed_test_data/Plus_strand_reads.fa ../
 600: paired-end insert size  
 210: overlap threshold after merging cliques  
 
+Output:  
+Contigs.fa: the produced contigs    
+PEG_nodes_sequences.fa: the nodes sequences in the graph
 
 
 # The whole pipeline
@@ -91,5 +94,5 @@ python pehaplo.py -f1 virus_1.fa -f2 virus_2.fa -l 180 -l1 210 -r 250 -F 600 -st
 
 Output:  
 Contigs.fa: the raw output contigs  
-Contigs_clipped.fa:  the contigs after error correction
+Contigs_clipped.fa:  the contigs after error correction  
 PEG_nodes_sequences.fa: the nodes sequences in the graph
