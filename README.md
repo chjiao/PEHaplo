@@ -96,7 +96,9 @@ Use the test in folder raw_test_data/.
 Example:
 cd PEHaplo  
 mkdir assembly  
-python pehaplo.py -f1 virus_1.fa -f2 virus_2.fa -l 180 -l1 210 -r 250 -F 600 -std 150 -n 3 -correct yes
+python ../pehaplo.py -f1 ../raw_test_data/
+/virus_1.fa -f2 ../raw_test_data/
+virus_2.fa -l 180 -l1 210 -r 250 -F 600 -std 150 -n 3 -correct yes
 
 Output:  
 Contigs.fa: the raw output contigs  
