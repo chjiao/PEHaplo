@@ -9,16 +9,27 @@ PEHaplo does not need any reference genomes and thus can be applied for identify
 # Quick Start
 To quickly test the core assembly algorithm, we have prepared the procssed data set (after error correction, removing duplicates, reads orientation adjustment, etc.) in folder processed_test_data. 
 
-## Dependencies
-1. Python 2.7.x
-2. Python module: [networkx](https://networkx.github.io)
-pip install networkx
-3. [Apsp](https://github.com/chjiao/Apsp)
-cd Apsp/
-make
-Copy the compiled binary file Apsp to your path.
+## Required Dependencies
+1. Install Python 2.7.x
+2. Install Python module: [networkx](https://networkx.github.io)  
+pip install networkx  
+3. [Apsp](https://github.com/chjiao/Apsp)  
+cd Apsp/  
+make  
+Copy the compiled binary file Apsp to your path
 
+## Running Example
+cd PEHaplo  
+mkdir assembly
+cd assembly  
+python ../apsp_overlap_clique.py ../processed_test_data/Plus_strand_reads.fa ../processed_test_data/pair_end_connections.txt 180 250 600 210  
 
+180: initial overlap threshold before merging cliques  
+250: read size  
+600: paired-end insert size  
+210: overlap threshold after merging cliques  
+
+# The whole pipeline
 # Dependencies
 PEHaplo is developed based on Python 2.7
 
