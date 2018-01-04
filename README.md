@@ -12,6 +12,8 @@ To quickly test the core assembly algorithm, we have prepared the procssed data 
 ## Required Dependencies
 1. Install Python 2.7.x
 2. Install Python module: [networkx 1.11](https://github.com/networkx/networkx/releases/tag/networkx-1.11)  
+cd networkx-1.11/  
+sudo python setup.py install  
 3. [Apsp](https://github.com/chjiao/Apsp)  
 cd Apsp/  
 make  
