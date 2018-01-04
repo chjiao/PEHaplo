@@ -17,6 +17,10 @@ cd Apsp/
 make  
 Copy the compiled binary file Apsp to your path
 
+## Installation
+PEHaplo was developed to run in Linux. To install:  
+git clone https://github.com/chjiao/PEHaplo.git
+
 ## Running Example
 cd PEHaplo  
 mkdir assembly  
