@@ -46,7 +46,8 @@ PEG_nodes_sequences.fa: the nodes sequences in the graph
 3. Install [Karect](https://github.com/aminallam/karect), so that karect is in your path  
 4. Install [Readjoiner](http://www.zbh.uni-hamburg.de/forschung/gi/software/readjoiner.html), so that readjoiner is in your path
 5. Install [Apsp](https://github.com/chjiao/Apsp), so that Apsp is in your path  
-6. Install [SGA](https://github.com/jts/sga), so that sga is in your path  
+6. Install [SGA](https://github.com/jts/sga), so that sga is in your path 
+7. Install [Samtools](http://samtools.sourceforge.net/), so that samtools in in your path
 
 For contigs correction based on alignment:  
 [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) is required in your path
@@ -96,9 +97,7 @@ Use the test in folder raw_test_data/.
 Example:
 cd PEHaplo  
 mkdir assembly  
-python ../pehaplo.py -f1 ../raw_test_data/
-/virus_1.fa -f2 ../raw_test_data/
-virus_2.fa -l 180 -l1 210 -r 250 -F 600 -std 150 -n 3 -correct yes
+python ../pehaplo.py -f1 ../raw_test_data/virus_1.fa -f2 ../raw_test_data/virus_2.fa -l 180 -l1 210 -r 250 -F 600 -std 150 -n 3 -correct yes
 
 Output:  
 Contigs.fa: the raw output contigs  
