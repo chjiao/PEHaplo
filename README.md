@@ -47,7 +47,7 @@ PEG_nodes_sequences.fa: the nodes sequences in the graph
 4. Install [Readjoiner](http://www.zbh.uni-hamburg.de/forschung/gi/software/readjoiner.html), so that readjoiner is in your path
 5. Install [Apsp](https://github.com/chjiao/Apsp), so that Apsp is in your path  
 6. Install [SGA](https://github.com/jts/sga), so that sga is in your path 
-7. Install [Samtools](http://samtools.sourceforge.net/), so that samtools in in your path
+7. Install [Samtools](http://samtools.sourceforge.net/), so that samtools is in your path
 
 For contigs correction based on alignment:  
 [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) is required in your path
@@ -103,3 +103,4 @@ Output:
 Contigs.fa: the raw output contigs  
 Contigs_clipped.fa:  the contigs after error correction  
 PEG_nodes_sequences.fa: the nodes sequences in the graph
+
