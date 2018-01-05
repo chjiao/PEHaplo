@@ -48,7 +48,10 @@ def main():
             subprocess.check_call("karect -correct -inputfile=%s -inputfile=%s -threads=%s -celltype=haploid -matchtype=hamming -aggressive=5.0 -numstages=2 -errorrate=0.25 -errorratesec=0.25" % (args.input_f1, args.input_f2, args.threads), shell=True)
         else:
             subprocess.check_call("karect -correct -inputfile=%s -inputfile=%s -celltype=haploid -matchtype=hamming -aggressive=5.0 -numstages=2 -errorrate=0.25 -errorratesec=0.25" % (args.input_f1, args.input_f2), shell=True)
-        subprocess.check_call('python "%s"/tools/join_pair_end_fasta.py karect_%s karect_%s karect_whole.fa' % (base_path, args.input_f1, args.input_f2), shell=True)
+
+        fa1_file = os.path.basename(args.input_f1)
+        fa2_file = os.path.basename(args.input_f2)
+        subprocess.check_call('python "%s"/tools/join_pair_end_fasta.py karect_%s karect_%s karect_whole.fa' % (base_path, fa1_file, fa2_file), shell=True)
 
         ## remove duplicates and substrings
         print "Removing duplicates and substrings -------------------------------------"
@@ -76,18 +79,16 @@ def main():
         ## reads orientation adjustment
         subprocess.check_call('python "%s"/tools/get_pairs_title_from_nondup.py kept_num.fa kept_pairs.txt' % base_path, shell=True)
         subprocess.check_call('python "%s"/tools/Seperate_strand_single_pair.py samp.des samp_edges.txt kept_num.fa kept_pairs.txt' % base_path, shell=True)
-        #"""
 
 
         # ---------------- Assembly ------------------
         print "Begin assembly --------------------------------------------------------"
-        subprocess.check_call('python "%s"/tools/gen_dup_pair_file.py kept_num.fa karect_whole_preprocessed.rmdup.fa karect_%s karect_%s' %(base_path, args.input_f1, args.input_f2), shell=True)
+        subprocess.check_call('python "%s"/tools/gen_dup_pair_file.py kept_num.fa karect_whole_preprocessed.rmdup.fa karect_%s karect_%s' %(base_path, fa1_file, fa2_file), shell=True)
         
         if args.overlap_len1:
             subprocess.check_call('python "%s"/apsp_overlap_clique.py Plus_strand_reads.fa pair_end_connections.txt %s %s %s %s' % (base_path, args.overlap_len, args.read_len, args.fragment_len, args.overlap_len1), shell=True)
         else:
             subprocess.check_call('python "%s"/apsp_overlap_clique.py Plus_strand_reads.fa pair_end_connections.txt %s %s %s %s' % (base_path, args.overlap_len, args.read_len, args.fragment_len, args.overlap_len), shell=True)
-        #"""
 
         # ---------------- remove duplicated contigs ------------------
         if args.threads:
@@ -97,6 +98,7 @@ def main():
             subprocess.check_call('sga index Contigs.fa', shell=True)
             subprocess.check_call('sga rmdup -e 0.005 Contigs.fa', shell=True)
         subprocess.check_call('mv Contigs.rmdup.fa Contigs.fa', shell=True)
+        #"""
 
         # ---------------- error correction -------------------------
         if args.contig_correct == 'yes':
@@ -107,7 +109,7 @@ def main():
             subprocess.check_call('bowtie2-build -f Contigs.fa index/contigs_index', shell=True)
 
             subprocess.check_call('bowtie2 -x index/contigs_index -f -k 1 --score-min L,0,-0.15 -t -p 4 -S contigs_alignment.sam karect_whole.fa', shell=True)
-            subprocess.check_call('samtools view -F 4 contigs_alignment.sam > contigs_mapped.sam', shell=True)
+            subprocess.check_call('samtools view -F 4 -S contigs_alignment.sam > contigs_mapped.sam', shell=True)
             
             subprocess.check_call('python "%s"/tools/identify_misjoin_contigs.py Contigs.fa contigs_mapped.sam %s %s %s' %(base_path, args.read_len, args.fragment_len, args.fragment_std), shell=True)
             
@@ -118,8 +120,13 @@ def main():
                 subprocess.check_call('sga index Contigs_clipped.fa', shell=True)
                 subprocess.check_call('sga rmdup -e 0.005 Contigs_clipped.fa', shell=True)
             subprocess.check_call('mv Contigs_clipped.rmdup.fa Contigs_clipped.fa', shell=True)
-
-         
+        
+        # ---------------- clean up -------------------------
+        subprocess.check_call('mkdir ../temp', shell=True)
+        subprocess.check_call('cp Contigs.fa Contigs_clipped.fa PEG_nodes_sequences.fa ../temp', shell=True)
+        subprocess.check_call('rm -rf *', shell=True)
+        subprocess.check_call('cp ../temp/* .', shell=True)
+        subprocess.check_call('rm -rf ../temp/', shell=True)
 
 if __name__=='__main__':
     main()

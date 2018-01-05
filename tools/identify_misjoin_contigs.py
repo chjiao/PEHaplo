@@ -1,13 +1,8 @@
 import re,sys,pdb,subprocess
 import math
 import networkx as nx
-import pygraphviz
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')
 from scipy import stats
-from matplotlib import pyplot as plt
-import matplotlib.patches as patches
 
 # use the midpoint instead of the whole profile
 # imply the PECC methods to identify misjoin contigs
