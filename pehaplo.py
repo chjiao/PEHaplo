@@ -25,6 +25,7 @@ def main():
     basic = parser.add_argument('-n', '--dup_n', dest='dup_n', type=int, help='the reads kept should be duplicated at least n times, default as keep all the duplicates removed reads')
     basic = parser.add_argument('-correct', dest='contig_correct', type=str, help='whether apply alignment based contigs correction(yes/no), default = no')
     basic = parser.add_argument('-t', '--threads', dest='threads', type=int, help='threads for karect, sga, bowtie2')
+    basic = parser.add_argument('-m', '--memory', dest='memory', type=str, help='maximal memory for readjoiner (xGB), default: 2GB')
 
     if len(sys.argv[1:])==0:
         parser.print_help()        #print usage
@@ -72,7 +73,10 @@ def main():
         ## readjoiner for overlap graph
         print "Reads orientation adjustment ------------------------------------------"
         subprocess.check_call("gt readjoiner prefilter -q -des -readset samp -db kept_num.fa", shell=True)
-        subprocess.check_call("gt readjoiner overlap -readset samp -memlimit 2GB -l %s" % args.overlap_len, shell=True)
+        if args.memory:
+            subprocess.check_call("gt readjoiner overlap -readset samp -memlimit %s -l %s" % (args.memory, args.overlap_len), shell=True)
+        else: 
+            subprocess.check_call("gt readjoiner overlap -readset samp -memlimit 2GB -l %s" % args.overlap_len, shell=True)
         subprocess.check_call("gt readjoiner spmtest -readset samp.0 -test showlist >samp_edges.txt", shell=True)
         #subprocess.check_call("rm samp.0.spm samp.rlt samp.ssp samp.0.cnt samp.esq samp.sds", shell=True)
 

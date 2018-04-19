@@ -72,7 +72,7 @@ def get_seq_from_fq(fq_file,des_file):
                     seq_dict[read_num]=(seq,quality)
     return read_name_list,read_map,seq_dict
 
-def create_graph_with_fq(edge_file,des_list):
+def create_graph_with_fq(edge_file, des_list):
     # create the initial graph, node name: read_index
     # read_node_dict: store the corresponding node for each read
     # des_list: the list storing the read_name
@@ -84,19 +84,13 @@ def create_graph_with_fq(edge_file,des_list):
             # 23287 + 40135 - 196
             read_1, std1, read_2, std2, overlap_len=line.strip().split()
             connect_type=std1+std2
-            #read_name=des_list[int(read_1)]
             G.add_node(read_1)
-            #read_node_dict[read_name]=read_1
-            #read_name=des_list[int(read_2)]
-            #G.add_node(read_2)
-            #read_node_dict[read_name]=read_2
             if not read_2 in G[read_1] and (not read_1==read_2): # bug fixed, judge whether the edge already exist, remove the edge connecting to self
                 G.add_edge(read_1,read_2,label=overlap_len,con_type=connect_type)
             elif read_2 in G[read_1]:
                 print "Duplicate edge found!",line.strip()
-                if int(overlap_len)>int(G[read_1][read_2]['label']):
-                    G[read_1][read_2]['label']=overlap
-                #pdb.set_trace()
+                if int(overlap_len)>int(G[read_1][read_2]['label']): # replace the edge with the larger overlap
+                    G[read_1][read_2]['label'] = overlap_len
     return G 
 
 def BFS_tranverse_graph(G,read_db,des_list,start_node):
@@ -469,18 +463,13 @@ minus_name='Minus_strand_reads.fa'
 f1=open(plus_name,'w')
 f2=open(minus_name,'w')
 
-des_list,read_map,read_db=get_seq_from_fa(fa_file,des_file) # read dictionary
-pair1_dict, pair2_dict=read_pair_file(pair_file, read_map)
+des_list, read_map, read_db = get_seq_from_fa(fa_file, des_file) # read dictionary
+pair1_dict, pair2_dict = read_pair_file(pair_file, read_map)
 
 read_node_dict={}
-G=create_graph_with_fq(edge_file,des_list)
+G=create_graph_with_fq(edge_file, des_list)
 print "Graph construction finished!"
-#plot_graph(G, 'strand_correction_overlap_graph.png')
-#pdb.set_trace()
-#subgraphs=nx.weakly_connected_components(G)
 
-#f_out=open('Plus_strand_reads.txt','w')
-#f_out2=open('Minus_strand_reads.txt','w')
 idx=0
 while(len(G)>0):
     idx+=1
@@ -488,7 +477,7 @@ while(len(G)>0):
     if len(starting_nodes)==0:
         break
         #pdb.set_trace()
-    plus_reads_dict,minus_reads_dict=BFS_tranverse_graph_pair(G,read_db,des_list,starting_nodes[0], pair1_dict, pair2_dict)
+    plus_reads_dict, minus_reads_dict = BFS_tranverse_graph_pair(G, read_db, des_list, starting_nodes[0], pair1_dict, pair2_dict)
     if len(plus_reads_dict)>4:
         output_reads(plus_reads_dict, minus_reads_dict, des_list, f1, f2)
 f1.close()
