@@ -102,7 +102,6 @@ def main():
             subprocess.check_call('sga index Contigs.fa', shell=True)
             subprocess.check_call('sga rmdup -e 0.005 Contigs.fa', shell=True)
         subprocess.check_call('mv Contigs.rmdup.fa Contigs.fa', shell=True)
-        #"""
 
         # ---------------- error correction -------------------------
         if args.contig_correct == 'yes':
@@ -124,13 +123,35 @@ def main():
                 subprocess.check_call('sga index Contigs_clipped.fa', shell=True)
                 subprocess.check_call('sga rmdup -e 0.005 Contigs_clipped.fa', shell=True)
             subprocess.check_call('mv Contigs_clipped.rmdup.fa Contigs_clipped.fa', shell=True)
+        #"""
         
         # ---------------- clean up -------------------------
-        subprocess.check_call('mkdir ../temp', shell=True)
-        subprocess.check_call('cp Contigs.fa Contigs_clipped.fa PEG_nodes_sequences.fa ../temp', shell=True)
-        subprocess.check_call('rm -rf *', shell=True)
-        subprocess.check_call('cp ../temp/* .', shell=True)
-        subprocess.check_call('rm -rf ../temp/', shell=True)
+        remove_files = "kept_pairs.txt kept_num.fa input_file.txt Plus_strand_reads.fa Minus_strand_reads.fa pair_end_connections.txt sequences.txt overlap_whole.txt Paths.txt Contigs.bwt Contigs_clipped.rbwt Contigs_clipped.rmdup.rbwt Contigs_clipped.rsai Contigs.rbwt Contigs.rmdup.rbwt Contigs.rsai Contigs_clipped.bwt Contigs_clipped.rmdup.bwt Contigs_clipped.rmdup.rsai Contigs_clipped.sai Contigs.rmdup.bwt Contigs.rmdup.rsai  Contigs.sai  Contigs_clipped.rmdup.dups.fa Contigs_clipped.rmdup.sai Contigs.rmdup.dups.fa Contigs.rmdup.sai samp.0.cnt samp.0.spm samp.des samp_edges.txt samp.esq samp.rlt samp.sds samp.ssp karect_whole.fa karect_whole_preprocessed.bwt karect_whole_preprocessed.rmdup.bwt karect_whole_preprocessed.rmdup.rbwt karect_whole_preprocessed.rsai karect_whole_preprocessed.fa karect_whole_preprocessed.rmdup.dups.fa karect_whole_preprocessed.rmdup.rsai karect_whole_preprocessed.sai karect_whole_preprocessed.rbwt karect_whole_preprocessed.rmdup.fa karect_whole_preprocessed.rmdup.sai res_graph_a.txt res_graph_b.txt contigs_alignment.sam contigs_mapped.sam PEG_nodes_sequences_before_removing.fa"
+        remove_files = remove_files.split()
+        remove_files.append('karect_'+fa1_file)
+        remove_files.append('karect_'+fa2_file)
+        remove_files.append('temp_res_'+fa1_file)
+        remove_files.append('temp_res_'+fa2_file)
+        for rev_file in remove_files:
+            try:
+                os.remove(rev_file)
+            except OSError:
+                pass
+        try:
+            subprocess.check_call('rm -r index', shell=True)
+        except:
+            pass
+
+        """
+        subprocess.check_call('rm res_graph*', shell=True)
+        subprocess.check_call('rm temp_res_*', shell=True)
+        subprocess.check_call('rm karect_whole_preprocessed*', shell=True)
+        subprocess.check_call('rm karect_whole.fa', shell=True)
+        subprocess.check_call('rm samp.0.cnt samp.0.spm samp.des samp_edges.txt samp.esq samp.rlt samp.sds samp.ssp', shell=True)
+        subprocess.check_call('rm kept_pairs.txt Plus_strand_reads.fa Minus_strand_reads.fa pair_end_connections.txt sequences.txt overlap_whole.txt Paths.txt', shell=True)
+        subprocess.check_call('rm Contigs.bwt Contigs_clipped.rbwt Contigs_clipped.rmdup.rbwt Contigs_clipped.rsai Contigs.rbwt Contigs.rmdup.rbwt Contigs.rsai Contigs_clipped.bwt Contigs_clipped.rmdup.bwt Contigs_clipped.rmdup.rsai Contigs_clipped.sai Contigs.rmdup.bwt Contigs.rmdup.rsai  Contigs.sai  Contigs_clipped.rmdup.dups.fa Contigs_clipped.rmdup.sai Contigs.rmdup.dups.fa Contigs.rmdup.sai', shell=True)
+        subprocess.check_call('rm -r index', shell=True)
+        """ 
 
 if __name__=='__main__':
     main()
