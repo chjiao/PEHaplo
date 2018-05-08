@@ -1,4 +1,5 @@
 import re,sys,pdb
+from __future__ import division
 
 # the output file of sga contains single-end and pair-end reads
 # only keep the pair-end reads 

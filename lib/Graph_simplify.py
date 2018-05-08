@@ -1,5 +1,6 @@
 import re,sys,pdb
 import networkx as nx
+from __future__ import division
 
 def collapse_graph(G, candidates,read_db, read_node_dict):
     # node collapsed: combined node

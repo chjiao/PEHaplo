@@ -1,4 +1,5 @@
 import re,sys,pdb
+from __future__ import division
 
 fq_file=sys.argv[1]
 f1=open('separate1.fq','w')

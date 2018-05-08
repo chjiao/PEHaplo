@@ -1,4 +1,5 @@
 import re,sys,pdb
+from __future__ import division
 
 fa_file=sys.argv[1]
 

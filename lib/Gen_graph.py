@@ -2,6 +2,7 @@ import re,sys,pdb
 import networkx as nx
 import subprocess
 import pygraphviz
+from __future__ import division
 
 def get_seq_from_fa(fa_file, des_file):
     """

@@ -1,4 +1,5 @@
 import re,sys,pdb
+from __future__ import division
 
 '''
 For single-end reads in the rmdup file, find the sequence of the other end if it is duplicated, link this read to that read in the non-dup file

@@ -1,4 +1,7 @@
 import sys
+from __future__ import division
+
+
 fa_file=sys.argv[1]
 num = int(sys.argv[2])
 f_out=open(sys.argv[3],'w')

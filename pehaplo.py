@@ -1,5 +1,6 @@
 import re,sys,os,pdb,subprocess
 import argparse
+from __future__ import division
 
 # -------------------------------
 __author__ = "Jiao Chen"
@@ -126,11 +127,11 @@ def main():
             subprocess.check_call('mv Contigs_clipped.rmdup.fa Contigs_clipped.fa', shell=True)
         
         # ---------------- clean up -------------------------
-        subprocess.check_call('mkdir ../temp', shell=True)
-        subprocess.check_call('cp Contigs.fa Contigs_clipped.fa PEG_nodes_sequences.fa ../temp', shell=True)
-        subprocess.check_call('rm -rf *', shell=True)
-        subprocess.check_call('cp ../temp/* .', shell=True)
-        subprocess.check_call('rm -rf ../temp/', shell=True)
+        #subprocess.check_call('mkdir ../temp', shell=True)
+        #subprocess.check_call('cp Contigs.fa Contigs_clipped.fa PEG_nodes_sequences.fa ../temp', shell=True)
+        #subprocess.check_call('rm -rf *', shell=True)
+        #subprocess.check_call('cp ../temp/* .', shell=True)
+        #subprocess.check_call('rm -rf ../temp/', shell=True)
 
 if __name__=='__main__':
     main()

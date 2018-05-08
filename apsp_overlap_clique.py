@@ -1,9 +1,9 @@
 import re,sys,pdb,subprocess
 import networkx as nx
-#import pygraphviz
 from datetime import datetime
 from lib.Graph_simplify import *
 from lib.Graph_assemble import *
+from __future__ import division
 
 def DFS_transitive_reduction(G):
     for u in G.nodes():

@@ -1,11 +1,8 @@
 import re,sys,pdb
+from __future__ import division
 
 fq_file=sys.argv[1]
 fa_file=sys.argv[2]
-#if fq_file.endswith('.fq') or fq_file.endswith('.fastq'):
-#    name=fq_file.split('.f',1)
-#fa_file=name+'.fa'
-#print fa_file
 
 lineno=0
 fa_out=open(fa_file,'w')

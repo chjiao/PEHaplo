@@ -3,6 +3,7 @@ import math
 import networkx as nx
 import numpy as np
 from scipy import stats
+from __future__ import division
 
 # use the midpoint instead of the whole profile
 # imply the PECC methods to identify misjoin contigs
@@ -424,8 +425,11 @@ for i in range(len(contig_read_ids)):
             reads_dict.pop(base)
     
     ## calculate the interval cutoff
-    inv_cut=-math.log(0.01)*con_len/float(count_pair)
-    print i,inv_cut
+    if count_pair>0:
+        inv_cut=-math.log(0.01)*con_len/float(count_pair)
+        print i,inv_cut
+    else:
+        continue
     ## step1: find the intervals
     for pair in contig_pairs:
         strand1, align1=reads_loc[i][pair[0]][0], int(reads_loc[i][pair[0]][1])
@@ -469,17 +473,17 @@ for i in range(len(contig_read_ids)):
                 pdb.set_trace()
             D,pValue=stats.kstest(pairs_len_l,'norm',(mu,std))
             if pValue<0.01:
-                inv_temp[0]=max(0, inv[0]-Fragment_len/2)
+                inv_temp[0]=max(0, int(inv[0]-Fragment_len/2))
         if pl==0 and sl>0:
-            inv_temp[0] = max(0, inv[0]-Fragment_len/2)
+            inv_temp[0] = max(0, int(inv[0]-Fragment_len/2))
         if r_discordant>0.5:
             if len(pairs_len_r)==0:
                 pdb.set_trace()
             D,pValue=stats.kstest(pairs_len_r,'norm',(mu,std))
             if pValue<0.01:
-                inv_temp[1]= min(con_len, inv[1]+Fragment_len/2)
+                inv_temp[1]= min(con_len, inv[1]+Fragment_len//2)
         if pr==0 and sr>0:
-            inv_temp[1] = min(con_len, inv[1] + Fragment_len/2)
+            inv_temp[1] = min(con_len, inv[1] + Fragment_len//2)
         tmp_intervals3.append(inv_temp)
     print i,tmp_intervals3
     
@@ -488,7 +492,7 @@ for i in range(len(contig_read_ids)):
     ## step3: identify the clipping boundary
     clip_loc=[]
     for inv in tmp_intervals3:
-        ds=Fragment_len/2
+        ds = Fragment_len//2
         left_margin=min(inv[1],inv[0]+ds)
         while (ds>10):
             SR_left=cal_SR(read_ids,reads_loc[i],reads_dict,[inv[0],left_margin],con_len,Fragment_len,read_len)
@@ -500,10 +504,10 @@ for i in range(len(contig_read_ids)):
             if pValue>=0.01:
                 break
             else:
-                ds=ds/2
+                ds=ds//2
                 left_margin=min(inv[1],inv[0]+ds)
 
-        ds=Fragment_len/2 
+        ds=Fragment_len//2 
         right_margin=max(inv[0],inv[1]-ds)
         while (ds>10):
             SL_right=cal_SL(read_ids,reads_loc[i],reads_dict,[right_margin,inv[1]],con_len,Fragment_len,read_len)
@@ -513,13 +517,13 @@ for i in range(len(contig_read_ids)):
             if pValue>=0.01:
                 break
             else:
-                ds=ds/2
+                ds=ds//2
                 right_margin=max(inv[0],inv[1]-ds)
         
         if left_margin<right_margin: # cut the contig
             clip_loc.append([left_margin,right_margin])
         else:
-            cut_loc=(left_margin+right_margin)/2
+            cut_loc=(left_margin+right_margin)//2
             clip_loc.append([cut_loc,cut_loc])
 
     # clip the contig

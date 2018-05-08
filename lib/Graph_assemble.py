@@ -1,5 +1,6 @@
 import re,sys,pdb
 import networkx as nx
+from __future__ import division
 
 def get_paired_score(path,succ_node,PE_G):
     score=0

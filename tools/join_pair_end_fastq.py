@@ -1,4 +1,5 @@
 import re,sys,pdb
+from __future__ import division
 
 # join two paired-end fq files to one fastq file
 fq1=sys.argv[1]

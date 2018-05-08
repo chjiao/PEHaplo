@@ -1,6 +1,7 @@
 import re,sys,pdb
 import networkx as nx
 import subprocess
+from __future__ import division
 
 def reverse_complement(seq):
     complement = {'A':'T','T':'A','U':'A','C':'G','G':'C','Y':'R','R':'Y','S':'S','W':'W','K':'M','M':'K','B':'V','D':'H','H':'D','V':'B','N':'N'}

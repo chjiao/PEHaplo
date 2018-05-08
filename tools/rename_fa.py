@@ -1,4 +1,5 @@
 import re,sys,pdb
+from __future__ import division
 
 fa_file=sys.argv[1]
 f_out=open(sys.argv[2],'w')
