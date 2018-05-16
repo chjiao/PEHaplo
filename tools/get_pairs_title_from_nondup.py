@@ -23,7 +23,7 @@ with open(nondup_file,'r') as f:
             else:
                 title_base_dict[base]+=1
                 f_out.write(title_dict[base][1:]+'\t'+title[1:]+'\n')
-                assert title_dict[base].endswith('1') and title.endswith('2')
+                assert (title_dict[base].endswith('1') and title.endswith('2')) or (title_dict[base].endswith('2') and title.endswith('1'))
 
 unpaired_list=[x for x in title_base_dict.keys() if title_base_dict[x]==1]
 paired_list=[x for x in title_base_dict.keys() if title_base_dict[x]==2]
