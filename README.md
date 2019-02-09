@@ -2,7 +2,7 @@
 
 PEHaplo is a *de novo* assembly tool for recovering virus haplotypes from virus quasispecies sequencing data. It utilizes overlap graph and paired-end information to recover virus haplotypes. 
 
-It takes paired-end reads file as input and outputs contigs that are part of or full haplotypes.
+It requires paired-end reads file as input and outputs contigs that are part of or full haplotypes.
 
 PEHaplo does not need any reference genomes and thus can be applied for identifying new haplotyps or haplotypes that are remotely related to characterized ones. 
 
