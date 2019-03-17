@@ -104,3 +104,5 @@ Contigs.fa: the raw output contigs
 Contigs_clipped.fa:  the contigs after error correction  
 PEG_nodes_sequences.fa: the nodes sequences in the graph
 
+## Installing via conda
+Noted that all the packages can be found on anaconda.cloud, which means you can easily install them by using conda. You can follow the [Guaidance](https://github.com/chjiao/TAR-VIR/blob/master/Guidance%20for%20Installing%20PEHaplo%20and%20TAR-VIR.md)to install step by step.
