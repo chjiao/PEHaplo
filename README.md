@@ -12,22 +12,29 @@ To quickly test the core assembly algorithm, we have prepared the procssed data 
 ## Required Dependencies
 1. Install Python 2.7.x
 2. Install Python module: [networkx 1.11](https://github.com/networkx/networkx/releases/tag/networkx-1.11)  
+```
 cd networkx-1.11/  
 sudo python setup.py install  
+```
 3. [Apsp](https://github.com/chjiao/Apsp)  
+```
 cd Apsp/  
 make  
+```
 Copy the compiled binary file Apsp to your path
 
 ## Installation
 PEHaplo was developed to run in Linux. To install:  
-git clone https://github.com/chjiao/PEHaplo.git
+`git clone https://github.com/chjiao/PEHaplo.git`
 
 ## Running Example
+```
 cd PEHaplo  
 mkdir assembly  
 cd assembly  
 python ../apsp_overlap_clique.py ../processed_test_data/Plus_strand_reads.fa ../processed_test_data/pair_end_connections.txt 180 250 600 210  
+```
+
 
 180: initial overlap threshold before merging cliques  
 250: read size  
@@ -99,9 +106,11 @@ Arguments:
 ## Test data and Running Examples
 Use the test in folder raw_test_data/.  
 Example:
+```
 cd PEHaplo  
 mkdir assembly  
 python ../pehaplo.py -f1 ../raw_test_data/virus_1.fa -f2 ../raw_test_data/virus_2.fa -l 180 -l1 210 -r 250 -F 600 -std 150 -n 3 -correct yes
+```
 
 Output:  
 Contigs.fa: the raw output contigs  
